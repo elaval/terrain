@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { tileLayer, latLng, Map } from 'leaflet';
+import { tileLayer, latLng, Map, Polyline } from 'leaflet';
 import * as L from 'leaflet';
 import { Shape } from '../../models/Shape';
 import { LeafletEvent } from 'leaflet';
@@ -92,9 +92,10 @@ export class MapComponent implements OnInit {
       'edit': editOptions
     };
 
-    const storedShapes = JSON.parse(localStorage.getItem("shapes"));
+    console.log(localStorage.getItem("shapes") );
+    //const storedShapes = localStorage.getItem("shapes") && JSON.parse(localStorage.getItem("shapes"));
 
-    console.log(storedShapes);
+    //console.log(storedShapes);
 
     
     //L.polyline(storedLine.latlngs).addTo(drawnItems);
@@ -103,6 +104,9 @@ export class MapComponent implements OnInit {
       var layer = event['layer'];
 
       this.shapeCollection.addShape({type: event['layerType'], layer:layer});
+
+      const s = this.shapeCollection;
+      console.log(s.toString());
       localStorage.setItem("shapes", this.shapeCollection.toString());
 
       if (event['layerType'] == "polyline") {
