@@ -1,6 +1,8 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { tileLayer, latLng, Map } from 'leaflet';
 import * as L from 'leaflet';
+import { Shape } from '../../models/Shape';
+import { LeafletEvent } from 'leaflet';
 
 @Component({
   selector: 'app-map',
@@ -95,10 +97,12 @@ export class MapComponent implements OnInit {
     
     L.polyline(storedLine.latlngs).addTo(drawnItems);
 
-    map.on(L.Draw.Event.CREATED,  (event:any) => {
-      var layer = event.layer;
+    map.on(L.Draw.Event.CREATED,  (event: LeafletEvent) => {
+      var layer = event['layer'];
 
-      if (event.layerType == "polyline") {
+      const shape = new Shape({type: event['layerType'], layer:layer});
+
+      if (event['layerType'] == "polyline") {
         const newPolyline = new Polyline(layer);
 
         const stringRep = newPolyline.toString();
