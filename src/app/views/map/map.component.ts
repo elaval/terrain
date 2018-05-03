@@ -3,6 +3,7 @@ import { tileLayer, latLng, Map } from 'leaflet';
 import * as L from 'leaflet';
 import { Shape } from '../../models/Shape';
 import { LeafletEvent } from 'leaflet';
+import { ShapeCollection } from '../../models/ShapeCollection';
 
 @Component({
   selector: 'app-map',
@@ -20,6 +21,7 @@ export class MapComponent implements OnInit {
     center: latLng(32.8011432, -96.8789132)
   };
 
+  shapeCollection = new ShapeCollection();
  
 
   
@@ -31,11 +33,6 @@ export class MapComponent implements OnInit {
 
   onMapReady(map: Map) {
     console.log("MAP");
-
-    const storedLine = JSON.parse(localStorage.getItem("line"));
-
-   
-    
 
     const drawnItems = L.featureGroup().addTo(map);
     const googleLayer = new L.TileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
@@ -94,13 +91,19 @@ export class MapComponent implements OnInit {
 
       'edit': editOptions
     };
+
+    const storedShapes = JSON.parse(localStorage.getItem("shapes"));
+
+    console.log(storedShapes);
+
     
-    L.polyline(storedLine.latlngs).addTo(drawnItems);
+    //L.polyline(storedLine.latlngs).addTo(drawnItems);
 
     map.on(L.Draw.Event.CREATED,  (event: LeafletEvent) => {
       var layer = event['layer'];
 
-      const shape = new Shape({type: event['layerType'], layer:layer});
+      this.shapeCollection.addShape({type: event['layerType'], layer:layer});
+      localStorage.setItem("shapes", this.shapeCollection.toString());
 
       if (event['layerType'] == "polyline") {
         const newPolyline = new Polyline(layer);
@@ -129,7 +132,7 @@ export class MapComponent implements OnInit {
     // add rectangle passing bounds and some basic styles
     L.rectangle(bounds, {color: "red", weight: 1}).addTo(drawnItems);
 
-      if (event.layerType == "rectangle") {
+      if (event['layerType'] == "rectangle") {
         const latlongs = layer.getLatLngs();
 
         // Add marker programatically:
@@ -152,19 +155,3 @@ export class MapComponent implements OnInit {
 
 }
 
-class Polyline {
-  latlngs: any;
-  constructor(layer) {
-    this.latlngs = layer.getLatLngs();
-    
-  }
-
-  toString() {
-    const myObject = {
-      type: 'polyline',
-      latlngs  : this.latlngs
-    }
-
-    return JSON.stringify(myObject);
-  } 
-}
