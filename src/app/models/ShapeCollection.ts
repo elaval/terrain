@@ -19,5 +19,7 @@ export class ShapeCollection {
 
     toArray() {
         const shapesArray = this.shapes.map(d => d.toObject());
+
+        return shapesArray;
     }
 }

@@ -92,9 +92,9 @@ export class MapComponent implements OnInit {
       'edit': editOptions
     };
 
-    console.log(localStorage.getItem("shapes") );
-    //const storedShapes = localStorage.getItem("shapes") && JSON.parse(localStorage.getItem("shapes"));
-
+    console.log(localStorage.getItem("shapes") == undefined );
+    const storedShapes = localStorage.getItem("shapes") !== undefined && JSON.parse(localStorage.getItem("shapes"));
+    this.buildShapeLayers(storedShapes);
     //console.log(storedShapes);
 
     
@@ -152,6 +152,25 @@ export class MapComponent implements OnInit {
     });
 
 
+
+  }
+
+  buildShapeLayers(shapes) {
+
+    const layers = shapes.map(d => {
+      switch (d.type) {
+        case 'rectangle':
+          return L.rectangle(d.latLngs[0]);
+        case 'polygon':
+          return L.polygon(d.latLngs[0]);
+        case 'polyline' : 
+          return L.polyline(d.latlngs[0]);
+        default:
+          return null;
+      }
+    })
+
+    console.log(layers);
 
   }
 
