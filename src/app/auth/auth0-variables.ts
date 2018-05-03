@@ -7,5 +7,5 @@ interface AuthConfig {
 export const AUTH_CONFIG: AuthConfig = {
   clientID: 'yhlMHPKOt3M8iWf2OCWuG0FmeJNSIkBA',
   domain: 'firstmakers.auth0.com',
-  callbackURL: 'http://localhost:4200/callback'
+  callbackURL: `${window.location.href}callback`
 };
