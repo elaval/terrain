@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { tileLayer, latLng, Map } from 'leaflet';
-import L = require('leaflet');
+import * as L from 'leaflet';
 
 @Component({
   selector: 'app-map',
