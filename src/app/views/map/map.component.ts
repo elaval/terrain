@@ -22,9 +22,10 @@ export class MapComponent implements OnInit {
     layers: [
       tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 30, attribution: '...' })
     ],
-    zoom: 17,
-    center: latLng(32.80285514121506, -96.89847404253672)
+    zoom: 18,
+    center: latLng(33.391054663683704,  -97.14901305211244)
   };
+
 
   shapeCollection = new ShapeCollection();
 
@@ -49,20 +50,31 @@ export class MapComponent implements OnInit {
       attribution: 'google'
     });
 
+    const Layer = new L.TileLayer('https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+      attribution: 'satellite'
+    });
+
+    
+
+
     const osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
     const osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-    const osm = L.tileLayer(osmUrl, { maxZoom: 18, attribution: osmAttrib });
+    const osm = L.tileLayer(osmUrl, { maxZoom: 30, attribution: osmAttrib });
+    const mapbox = L.tileLayer(
+      'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZWxhdmFsIiwiYSI6ImNqZ3JzdzhlMjA0OWkyd24xMGh2Nmp3ZjIifQ.LF8Unpt13Tmea5l6YyANRg', {
+          tileSize: 512,
+          zoomOffset: -1,
+          attribution: '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    });
 
     L.control.layers(
       {
-        'osm': osm.addTo(map),
-
-        "google": L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
-            attribution: 'google'
-        })
+        'street': osm.addTo(map),
+        "sat": mapbox
       },
-      {'drawlayer': this.drawnItems },
-      { position: 'topleft', collapsed: false }
+      {},
+      //{'drawlayer': this.drawnItems },
+      { position: 'bottomleft', collapsed: false }
     ).addTo(map);
 
 
@@ -105,14 +117,14 @@ export class MapComponent implements OnInit {
     };
 
     // Add layers that have been saved
-    const layers = this.shapesService.restoreLayers();
+    this.shapesService.restoreLayers()
+    .then((layers:any[]) => {
+      layers.forEach(layer => {
+        layer.addTo(this.drawnItems);
+      });
+      this.updateMetrics();
+    })
 
-    layers.forEach(layer => {
-      console.log((layer instanceof L.Rectangle) )
-      layer.addTo(this.drawnItems);
-    });
-
-    this.updateMetrics()
 
     map.on(L.Draw.Event.CREATED,  (event: LeafletEvent) => {
       var layer = event['layer'];

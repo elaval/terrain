@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as L from 'leaflet';
+import * as d3 from 'd3';
 
 @Injectable()
 export class ShapesService {
@@ -29,33 +30,49 @@ export class ShapesService {
   // Retrieves the shapes that have bees stored in localStorage as JSON strings and
   // converts them into layers
   restoreLayers() {
-    let layers = [];
-    const shapesString = localStorage.getItem("shapes");
-    const shapes:any[] = shapesString &&  shapesString !== undefined ? JSON.parse(shapesString) : null;
+    return new Promise((resolve,reject) => {
+      let layers = [];
+      const shapesString = localStorage.getItem("shapes");
+      const shapes:any[] = shapesString &&  shapesString !== undefined ? JSON.parse(shapesString) : null;
+  
+      if (shapes) {
+        layers = this.shapes2Layers(shapes);
+        resolve(layers);
+      } else {
+        // If not data has been saved, we load demo data
+        const dataPromise:any = d3.json('assets/demo.json');
+        dataPromise.then((shapes => {
+          layers = this.shapes2Layers(shapes);
+          resolve(layers);
+        }));
+        
+      }
+    
+    } )
 
-    if (shapes) {
-      layers = shapes.map(d => {
-        const type = d.type;
-        let layer = null;
-        switch (type) {
-          case 'rectangle':
-            layer = L.rectangle(d.latLngs);
-            break;        
-          case 'polygon':
-            layer = L.polygon(d.latLngs);
-            break;        
-          case 'polyline':
-            layer = L.polyline(d.latLngs, {color: '#AAAAAA', weight:2});
-            break;
-          default:
-            break;
-        }
-        return layer;
-      })
-    }
+  }
 
+  shapes2Layers(shapes) {
+    const layers = shapes.map(d => {
+      const type = d.type;
+      let layer = null;
+      switch (type) {
+        case 'rectangle':
+          layer = L.rectangle(d.latLngs);
+          break;        
+        case 'polygon':
+          layer = L.polygon(d.latLngs);
+          break;        
+        case 'polyline':
+          layer = L.polyline(d.latLngs, {color: '#AAAAAA', weight:2});
+          break;
+        default:
+          break;
+      }
+      return layer;
+    })
 
-    return layers;
+    return layers
   }
 
 
