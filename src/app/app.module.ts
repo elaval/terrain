@@ -14,6 +14,7 @@ import { CallbackComponent } from './callback/callback.component';
 import { MapComponent } from './views/map/map.component';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { LeafletDrawModule } from '@asymmetrik/ngx-leaflet-draw';
+import { ShapesService } from './services/shapes.service';
 
 
 
@@ -33,7 +34,10 @@ import { LeafletDrawModule } from '@asymmetrik/ngx-leaflet-draw';
     LeafletDrawModule.forRoot()
 
   ],
-  providers: [AuthService],
+  providers: [
+    AuthService,
+    ShapesService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

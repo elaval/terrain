@@ -4,6 +4,8 @@ import * as L from 'leaflet';
 import { Shape } from '../../models/Shape';
 import { LeafletEvent } from 'leaflet';
 import { ShapeCollection } from '../../models/ShapeCollection';
+import { ShapesService } from '../../services/shapes.service';
+import * as d3 from 'd3';
 
 @Component({
   selector: 'app-map',
@@ -11,21 +13,29 @@ import { ShapeCollection } from '../../models/ShapeCollection';
   styleUrls: ['./map.component.css']
 })
 export class MapComponent implements OnInit {
-  area: number;
+  
+  area;
+  distance;
+
   drawOptions: any;
   options = {
     layers: [
       tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 30, attribution: '...' })
     ],
-    zoom: 18,
-    center: latLng(32.8011432, -96.8789132)
+    zoom: 17,
+    center: latLng(32.80285514121506, -96.89847404253672)
   };
 
   shapeCollection = new ShapeCollection();
+
+  drawnItems: L.FeatureGroup;  // Feature group that contains all drawn items
  
 
   
-  constructor(private zone: NgZone) { }
+  constructor(
+    private zone: NgZone,
+    private shapesService: ShapesService
+  ) { }
 
   ngOnInit() {
 
@@ -34,7 +44,7 @@ export class MapComponent implements OnInit {
   onMapReady(map: Map) {
     console.log("MAP");
 
-    const drawnItems = L.featureGroup().addTo(map);
+    this.drawnItems = L.featureGroup().addTo(map);
     const googleLayer = new L.TileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
       attribution: 'google'
     });
@@ -51,13 +61,13 @@ export class MapComponent implements OnInit {
             attribution: 'google'
         })
       },
-      {'drawlayer': drawnItems },
+      {'drawlayer': this.drawnItems },
       { position: 'topleft', collapsed: false }
     ).addTo(map);
 
 
     const editOptions:any = {
-      featureGroup: drawnItems,
+      featureGroup: this.drawnItems,
       poly: {
           allowIntersection: true
       }    
@@ -68,9 +78,13 @@ export class MapComponent implements OnInit {
       marker:false,
       circle:false,
       circlemarker:false,
+      
 
       polyline : {
         allowIntersection: true,
+        shapeOptions: {
+          color: '#AAAAAA'
+        }
       },
       polygon: {
           allowIntersection: false,
@@ -86,92 +100,68 @@ export class MapComponent implements OnInit {
 
     this.drawOptions = {
       'position': 'topright',
-      
       'draw': drawOptions,
-
       'edit': editOptions
     };
 
-    console.log(localStorage.getItem("shapes") == undefined );
-    const storedShapes = localStorage.getItem("shapes") !== undefined && JSON.parse(localStorage.getItem("shapes"));
-    this.buildShapeLayers(storedShapes);
-    //console.log(storedShapes);
+    // Add layers that have been saved
+    const layers = this.shapesService.restoreLayers();
 
-    
-    //L.polyline(storedLine.latlngs).addTo(drawnItems);
+    layers.forEach(layer => {
+      console.log((layer instanceof L.Rectangle) )
+      layer.addTo(this.drawnItems);
+    });
+
+    this.updateMetrics()
 
     map.on(L.Draw.Event.CREATED,  (event: LeafletEvent) => {
       var layer = event['layer'];
 
-      this.shapeCollection.addShape({type: event['layerType'], layer:layer});
+      // This might be redundatnt, but we beed to add the layer to the featureGroup in order to save tha last item
+      this.drawnItems.addLayer(layer);
 
-      const s = this.shapeCollection;
-      console.log(s.toString());
-      localStorage.setItem("shapes", this.shapeCollection.toString());
-
-      if (event['layerType'] == "polyline") {
-        const newPolyline = new Polyline(layer);
-
-        const stringRep = newPolyline.toString();
-
-        localStorage.setItem("line", stringRep);
-
-        let prevLatLng = null;
-        layer.getLatLngs().forEach((d => {
-          prevLatLng = prevLatLng || d;
-
-          console.log(d.distanceTo(prevLatLng));
-
-        }))
-      }
-
-
-      const geoData = layer.toGeoJSON();
-
-      //const newGeoLayer = L.geoJSON(geoData).addTo(drawnItems);
-
-          // define rectangle geographical bounds
-    const bounds:any = [[32.8011432, -96.8789132], [32.8001422, -96.8779112]];
-
-    // add rectangle passing bounds and some basic styles
-    L.rectangle(bounds, {color: "red", weight: 1}).addTo(drawnItems);
-
-      if (event['layerType'] == "rectangle") {
-        const latlongs = layer.getLatLngs();
-
-        // Add marker programatically:
-        L.marker([32.8011432, -96.8789132]).addTo(drawnItems);
-
-        layer.bindPopup('A popup!');
-    
-
-        this.zone.run(() => {
-          this.area = L.GeometryUtil.geodesicArea(latlongs[0]);
-        })
-      }
+      this.updateMetrics();
+      this.saveLayers();
     });
 
+    map.on(L.Draw.Event.EDITED, (event: L.DrawEvents.Edited) => {
+      this.updateMetrics();
+      this.saveLayers();
+    })
+
+    map.on(L.Draw.Event.DELETED, (event: L.DrawEvents.Edited) => {
+      this.updateMetrics();
+      this.saveLayers();
+    })
+
+    const displayPos = (e) => {
+      console.log(map.getZoom(), map.getCenter())
+    }
+    
+    map.on({
+      'zoomend': displayPos,
+      'moveend': displayPos,
+    })
 
 
   }
 
-  buildShapeLayers(shapes) {
+  updateMetrics() {
+    const layers = this.drawnItems.getLayers();
+    const metrics = this.shapesService.calculateMetrics(layers);
 
-    const layers = shapes.map(d => {
-      switch (d.type) {
-        case 'rectangle':
-          return L.rectangle(d.latLngs[0]);
-        case 'polygon':
-          return L.polygon(d.latLngs[0]);
-        case 'polyline' : 
-          return L.polyline(d.latlngs[0]);
-        default:
-          return null;
-      }
+    // We need to use zone.run, to make sure that Angular updates the properties 
+    this.zone.run(() => {
+      this.area = L.GeometryUtil.readableArea(metrics.area, false);
+      this.distance = L.GeometryUtil['readableDistance'](metrics.length, "yard");
     })
 
-    console.log(layers);
+  }
 
+
+  saveLayers() {
+    const layers = this.drawnItems.getLayers();
+    this.shapesService.saveLayers(layers);
   }
 
 
