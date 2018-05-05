@@ -16,14 +16,15 @@ export class MapComponent implements OnInit {
   margin = {
     top:50
   }
-  area;
-  distance;
+
+  data = {
+    area:null,
+    distance:null
+  }
+ 
 
   drawOptions: any;
   options = {
-    layers: [
-      tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 30, attribution: '...' })
-    ],
     zoom: 18,
     center: latLng(33.391054663683704,  -97.14901305211244)
   };
@@ -41,8 +42,6 @@ export class MapComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    const windowSize = document.body.getBoundingClientRect().height;
-    d3.select("div[leaflet]").style("height", `${windowSize-this.margin.top}px`);
   }
 
   onMapReady(map: Map) {
@@ -106,7 +105,7 @@ export class MapComponent implements OnInit {
       
 
       polyline : {
-        allowIntersection: true,
+        allowIntersection: false,
         shapeOptions: {
           color: '#AAAAAA'
         }
@@ -128,6 +127,17 @@ export class MapComponent implements OnInit {
       'draw': drawOptions,
       'edit': editOptions
     };
+
+    // Create a new control with an information panel
+    const info = new L.Control({
+      position:"bottomright"
+    });
+
+    info.onAdd = function (map) {
+      return  <HTMLElement>d3.select("#infopanel").node();
+    };
+
+    info.addTo(map);
   }
 
   /**
@@ -154,16 +164,6 @@ export class MapComponent implements OnInit {
       this.updateMetrics();
       this.saveLayers();
     })
-
-    const displayPos = (e) => {
-      console.log(map.getZoom(), map.getCenter())
-    }
-    
-    map.on({
-      // Used as configuration helpers
-      'zoomend': displayPos,
-      'moveend': displayPos,
-    })
   }
 
   /**
@@ -178,6 +178,10 @@ export class MapComponent implements OnInit {
         layer.addTo(this.drawnItems);
       });
       this.updateMetrics();
+
+      // Change map zoom / position to fit existing shapes
+      const drawnBounds = this.drawnItems.getBounds();
+      drawnBounds.isValid() ? map.fitBounds(this.drawnItems.getBounds()) : null;
     })
   }
 
@@ -191,10 +195,10 @@ export class MapComponent implements OnInit {
     // We need to use zone.run, to make sure that Angular updates the properties 
     this.zone.run(() => {
       // Transform are units into non-metric units
-      this.area = L.GeometryUtil.readableArea(metrics.area, false);
+      this.data.area = L.GeometryUtil.readableArea(metrics.area, false);
 
       // Transform distance into non-metric units
-      this.distance = L.GeometryUtil['readableDistance'](metrics.length, "yard");
+      this.data.distance = L.GeometryUtil['readableDistance'](metrics.length, "yard");
     })
 
   }

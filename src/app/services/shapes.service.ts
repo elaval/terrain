@@ -35,7 +35,7 @@ export class ShapesService {
       const shapesString = localStorage.getItem("shapes");
       const shapes:any[] = shapesString &&  shapesString !== undefined ? JSON.parse(shapesString) : null;
   
-      if (shapes) {
+      if (shapes && shapes.length) {
         layers = this.shapes2Layers(shapes);
         resolve(layers);
       } else {

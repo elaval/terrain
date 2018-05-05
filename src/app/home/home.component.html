@@ -1,6 +1,6 @@
-<h4 *ngIf="auth.isAuthenticated()">
+<div *ngIf="auth.isAuthenticated()">
   <app-map></app-map>
-</h4>
+</div>
 <div *ngIf="!auth.isAuthenticated()">
   
   <img src="assets/logo.png" class="img-responsive" alt="Image">

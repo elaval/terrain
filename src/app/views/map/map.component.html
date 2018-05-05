@@ -1,9 +1,7 @@
-<div>Selected area: {{area}}</div>
-<div>Length of irrigation lines: {{distance}}</div>
-<div style="height: 800px;"
+<div id="#map" style="height: 100vh;"
      leaflet leafletDraw
      [leafletOptions]="options"
      [leafletDrawOptions]="drawOptions"
      (leafletMapReady)="onMapReady($event)">
->
 </div>
+<app-infopanel [data]="data" id="infopanel"></app-infopanel>

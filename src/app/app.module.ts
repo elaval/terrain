@@ -15,6 +15,7 @@ import { MapComponent } from './views/map/map.component';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { LeafletDrawModule } from '@asymmetrik/ngx-leaflet-draw';
 import { ShapesService } from './services/shapes.service';
+import { InfopanelComponent } from './views/infopanel/infopanel.component';
 
 
 
@@ -23,7 +24,8 @@ import { ShapesService } from './services/shapes.service';
     AppComponent,
     HomeComponent,
     CallbackComponent,
-    MapComponent
+    MapComponent,
+    InfopanelComponent
   ],
   imports: [
     BrowserModule,
