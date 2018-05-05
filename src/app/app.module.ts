@@ -5,12 +5,12 @@ import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home/home.component';
+import { HomeComponent } from './views/home/home.component';
 
 import { ROUTES } from './app.routes';
 
 import { AuthService } from './auth/auth.service';
-import { CallbackComponent } from './callback/callback.component';
+
 import { MapComponent } from './views/map/map.component';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { LeafletDrawModule } from '@asymmetrik/ngx-leaflet-draw';
@@ -23,7 +23,6 @@ import { InfopanelComponent } from './views/infopanel/infopanel.component';
   declarations: [
     AppComponent,
     HomeComponent,
-    CallbackComponent,
     MapComponent,
     InfopanelComponent
   ],

@@ -47,9 +47,7 @@ export class MapComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    (L as any).drawLocal.draw.toolbar.buttons.polyline = 'Draw an irrigation line';
-    (L as any).drawLocal.draw.toolbar.buttons.rectangle = 'Draw plot rectangular area';
-    (L as any).drawLocal.draw.toolbar.buttons.polygon = 'Draw plot area';
+    this.localizeDrawTooltips();
   }
 
   onMapReady(map: Map) {
@@ -88,9 +86,9 @@ export class MapComponent implements OnInit {
 
     L.control.layers(
       {
-        'street': openStreetMap.addTo(map),
-        "sat": mapbox,
-        "google" : google
+        'street': openStreetMap,
+        "sat": mapbox.addTo(map),
+        "google sat" : google
 
       },
       {},//{'drawlayer': this.drawnItems },
@@ -106,7 +104,7 @@ export class MapComponent implements OnInit {
     }
 
     const drawOptions:any = {
- 
+      // Hide these components
       marker:false,
       circle:false,
       circlemarker:false,
@@ -152,6 +150,33 @@ export class MapComponent implements OnInit {
 
     info.addTo(map);
   }
+
+  /**
+   * Modify standard Leaflet Draw tooltip texts 
+   */
+  localizeDrawTooltips() {
+    (L as any).drawLocal.draw.toolbar.buttons.polyline = 'Draw an irrigation line';
+    (L as any).drawLocal.draw.toolbar.buttons.rectangle = 'Draw plot rectangular area';
+    (L as any).drawLocal.draw.toolbar.buttons.polygon = 'Draw plot area';
+    (L as any).drawLocal.draw.toolbar.buttons.polygon = 'Draw plot area';
+
+    (L as any).drawLocal.draw.handlers.polyline.tooltip = {
+      start: 'Click to start drawing irrigation line.',
+      cont: 'Click to continue drawing irrigation line.',
+      end: 'Click last point to finish irrigation line.'
+    };
+
+    (L as any).drawLocal.draw.handlers.polygon.tooltip = {
+      start: 'Click to start drawing plot area.',
+      cont: 'Click to continue drawing plot area.',
+      end: 'Click first point to close this plot area.'
+    };
+
+    (L as any).drawLocal.draw.handlers.rectangle.tooltip = {
+				start: 'Click and drag to draw rectangular plot area.'
+    };
+  }
+
 
   /**
    * Handle events (when items are created, edited, deleted, ...)

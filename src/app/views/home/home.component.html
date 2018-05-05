@@ -1,0 +1,9 @@
+<div *ngIf="auth.isAuthenticated()">
+  <app-map></app-map>
+</div>
+<div *ngIf="!auth.isAuthenticated()" class="text-center">
+  
+  <img src="assets/logo.png" class="img-responsive terrain" alt="Image">
+  <h4>  You are not logged in!<br> Please <a href="#" (click)="auth.login()">Log In</a> to continue.
+  </h4>
+</div>
