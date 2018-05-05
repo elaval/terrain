@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import * as L from 'leaflet';
 import * as d3 from 'd3';
+import { POLYLINE_SHAPE_OPTIONS } from '../config';
+
+const smartMetricsMicroServiceUrl= "https://wt-867ca35bffcc22ad4896795f6d081535-0.sandbox.auth0-extend.com/irrigationMetrics";
 
 @Injectable()
 export class ShapesService {
@@ -64,7 +67,7 @@ export class ShapesService {
           layer = L.polygon(d.latLngs);
           break;        
         case 'polyline':
-          layer = L.polyline(d.latLngs, {color: '#AAAAAA', weight:2});
+          layer = L.polyline(d.latLngs, POLYLINE_SHAPE_OPTIONS);
           break;
         default:
           break;
@@ -78,23 +81,30 @@ export class ShapesService {
 
 
   calculateMetrics(layers) {
-    let area = 0;
-    let length = 0;
+    return new Promise((resolve, reject) => {
+      let area = 0;
+      let distance = 0;
+  
+      layers.forEach(layer => {
+        const type = this.getLayerType(layer);
+  
+        if (type == 'rectangle' || type == 'polygon') {
+          area += L.GeometryUtil.geodesicArea(layer.getLatLngs()[0]);
+        }
+  
+        if (type == 'polyline') {
+          distance += this.getPolyLineLength(layer);
+        }
+  
+      })
 
-    layers.forEach(layer => {
-      const type = this.getLayerType(layer);
-
-      if (type == 'rectangle' || type == 'polygon') {
-        area += L.GeometryUtil.geodesicArea(layer.getLatLngs()[0]);
-      }
-
-      if (type == 'polyline') {
-        length += this.getPolyLineLength(layer);
-      }
-
+      const request:any = d3.json(`${smartMetricsMicroServiceUrl}?area=${area}&distance=${distance}`);
+      request
+      .then(data => {
+        resolve({'area' : area, 'distance': distance, 'smartMetrics':data});
+      })
+  
     })
-
-    return {'area' : area, 'length': length}
   }
 
 

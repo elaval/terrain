@@ -1,4 +1,6 @@
 <div class="info">
-  <div class="info-item">Drawn plot area: {{data.area}}</div>
-  <div class="info-item">Irrigation pipes: {{data.distance}}</div>
+  <div class="info-item">Drawn plot area: {{data.formatedArea}}</div>
+  <div class="info-item">Irrigation pipes: {{data.formatedDistance}}</div>
+  <div class="info-item">Weekly water: {{numFormatter(data.weeklyWater)}} lts</div>
+  <div class="info-item">Number of Sprinklers: {{data.numSprinklers}}</div>
 </div>

@@ -6,6 +6,7 @@ import { LeafletEvent } from 'leaflet';
 import { ShapeCollection } from '../../models/ShapeCollection';
 import { ShapesService } from '../../services/shapes.service';
 import * as d3 from 'd3';
+import { POLYLINE_SHAPE_OPTIONS } from '../../config';
 
 @Component({
   selector: 'app-map',
@@ -18,8 +19,12 @@ export class MapComponent implements OnInit {
   }
 
   data = {
-    area:null,
-    distance:null
+    area:0,
+    distance:0,
+    formatedArea:"",
+    formatedDistance:"",
+    weeklyWater: 0,
+    numSprinklers: 0
   }
  
 
@@ -42,6 +47,9 @@ export class MapComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    (L as any).drawLocal.draw.toolbar.buttons.polyline = 'Draw an irrigation line';
+    (L as any).drawLocal.draw.toolbar.buttons.rectangle = 'Draw plot rectangular area';
+    (L as any).drawLocal.draw.toolbar.buttons.polygon = 'Draw plot area';
   }
 
   onMapReady(map: Map) {
@@ -106,9 +114,8 @@ export class MapComponent implements OnInit {
 
       polyline : {
         allowIntersection: false,
-        shapeOptions: {
-          color: '#AAAAAA'
-        }
+        shapeOptions: POLYLINE_SHAPE_OPTIONS,
+        title: "Irrigation line"
       },
       polygon: {
           allowIntersection: false,
@@ -118,6 +125,12 @@ export class MapComponent implements OnInit {
         allowIntersection: true,
 
         showArea:true
+      },
+      toolbar: {
+        buttons: {
+          polyline: 'Draw an irrigation line'
+        }
+
       }
     
     }
@@ -190,16 +203,24 @@ export class MapComponent implements OnInit {
    */
   updateMetrics() {
     const layers = this.drawnItems.getLayers();
-    const metrics = this.shapesService.calculateMetrics(layers);
+    this.shapesService.calculateMetrics(layers)
+    .then((metrics:any) => {
+      // We need to use zone.run, to make sure that Angular updates the properties 
+      this.zone.run(() => {
+        // Transform are units into non-metric units
+        this.data.area = metrics.area;
+        this.data.formatedArea = L.GeometryUtil.readableArea(metrics.area, false);
 
-    // We need to use zone.run, to make sure that Angular updates the properties 
-    this.zone.run(() => {
-      // Transform are units into non-metric units
-      this.data.area = L.GeometryUtil.readableArea(metrics.area, false);
+        // Transform distance into non-metric units
+        this.data.distance = metrics.distance;
+        this.data.formatedDistance = L.GeometryUtil['readableDistance'](metrics.distance, "yard");
+        this.data.weeklyWater = Math.round(metrics.smartMetrics.dailyWater * 7);
+        this.data.numSprinklers = metrics.smartMetrics.numSprinklers;
 
-      // Transform distance into non-metric units
-      this.data.distance = L.GeometryUtil['readableDistance'](metrics.length, "yard");
+      })
     })
+
+
 
   }
 
