@@ -147,7 +147,7 @@ export class MapComponent implements OnInit {
     });
 
     info.onAdd = function (map) {
-      return  <HTMLElement>d3.select("#infopanel").node();
+      return  <HTMLElement>document.querySelector("#infopanel");
     };
 
     info.addTo(map);
