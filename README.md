@@ -5,7 +5,7 @@ Basic POC of a Web application with the folowing features
 * Maps & editable objects (polygons, rectangles & polylines) using [Leaflet](https://leafletjs.com/)
 * Basic internal calculations for _area_ (polygons & rectangles) and _length/distance_ (polylines)
 * Basic data from external Microservices using [Webtask](https://webtask.io/) 
-* Responsive
+* Responsive (for use on desktop or mobile browsers)
 
 ![alt text](https://media.giphy.com/media/8vI1CDKpgw5lDhEzcF/giphy.gif)
 
