@@ -30,14 +30,6 @@ cd terrain
 npm install
 ```
 
-Clone the repo or download it from the Angular quickstart page in Auth0's documentation. Install the Angular CLI and the dependencies for the app.
-
-```bash
-npm install -g @angular/cli
-cd 01-Login
-npm install
-```
-
 The development server that comes with the Angular CLI can be used to serve the application.
 
 ```bash
@@ -46,6 +38,6 @@ npm start
 
 The application will be served at `http://localhost:3000`.
 
-> **Note:** The default Angular CLI port is `4200`, but Auth0 samples use port `3000` instead.
+> **Note:** The default Angular CLI port is `4200`, but in this demo with npm start we use port `3000` instead.
 
 
