@@ -17,7 +17,7 @@ This sample demonstrates how to add authentication to an Angular application usi
 This site is hosted in an Amazon S3 Bucket and is directly built & updated using [travis-ci](http://travis-ci.org) when  changes are pushed to the repository.
 
 ## External microservice
-[Information Panel](https://raw.githubusercontent.com/elaval/terrain/master/src/assets/readme_assets/infopanel.png)
+![Information Panel](https://raw.githubusercontent.com/elaval/terrain/master/src/assets/readme_assets/infopanel.png)
 
 ## Running the application locally
 
