@@ -13,7 +13,7 @@ Basic POC of a Web application with the folowing features
 
 [http://demo.firstmakers.com/terrain](http://demo.firstmakers.com/terrain)
 
-This site is hosted in an Amazon S3 Bucket and is directly built & updated using [travis-ci](http://travis-ci.org) when  changes are pushed to the repository.
+This site is hosted on an Amazon S3 Bucket and is built & updated using Continous Integration (CI) using [travis-ci](http://travis-ci.org) (when changes are pushed to the repository, a new built is triggered and copied into the S3 bucket).
 
 ## External microservice
 We demonstrate the use of Microservices with a simple REST API that recieves as input an _area_ and _distance_ and returns the amount of daily water required to irrigate the land area (*dailyWater*)  and the number of sprinklers required for irrigation lines with the given distance (*numSprinklers*).  _Note: Calculations are simulated for demo purposes only._
