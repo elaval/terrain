@@ -1,10 +1,18 @@
-# Auth0 Angular Login
+# Terrain
+Basic POC of a Web application with the folowing features
 
+* Authentication (using Auth0)
+* Maps & editable objects (polygons, rectangles & polylines) using Leaflet
+* Basic builtin calculation (polygons & rectangles area, polylines length)
+* Basic data from external Microservices using Webtask (simulates calculation of water & sprinkles for the given area & distance input)
 This sample demonstrates how to add authentication to an Angular application using Auth0's Lock widget from the hosted login page. The sample uses the Angular CLI.
+* Responsive
 
-## Getting Started
+![alt text](https://media.giphy.com/media/8vI1CDKpgw5lDhEzcF/giphy.gif)
 
-If you haven't already done so, [sign up](https://auth0.com) for your free Auth0 account and create a new client in the [dashboard](https://manage.auth0.com). Find the **domain** and **client ID** from the settings area and add the URL for your application to the **Allowed Callback URLs** box. If you are using the server provided by the Angular CLI, that URL is `http://localhost:3000/callback`.
+## Live version
+
+[http://demo.firstmakers.com/terrain](http://demo.firstmakers.com/terrain)
 
 Clone the repo or download it from the Angular quickstart page in Auth0's documentation. Install the Angular CLI and the dependencies for the app.
 
