@@ -4,8 +4,7 @@ Basic POC of a Web application with the folowing features
 * Authentication (using [Auth0](https://auth0.com/))
 * Maps & editable objects (polygons, rectangles & polylines) using [Leaflet](https://leafletjs.com/)
 * Basic builtin calculation (polygons & rectangles area, polylines length)
-* Basic data from external Microservices using [Webtask](https://webtask.io/) (simulates calculation of water & sprinkles for the given area & distance input)
-This sample demonstrates how to add authentication to an Angular application using Auth0's Lock widget from the hosted login page. The sample uses the Angular CLI.
+* Basic data from external Microservices using [Webtask](https://webtask.io/) 
 * Responsive
 
 ![alt text](https://media.giphy.com/media/8vI1CDKpgw5lDhEzcF/giphy.gif)
@@ -17,7 +16,7 @@ This sample demonstrates how to add authentication to an Angular application usi
 This site is hosted in an Amazon S3 Bucket and is directly built & updated using [travis-ci](http://travis-ci.org) when  changes are pushed to the repository.
 
 ## External microservice
-We demonstrate the use of Microservices with a simple REST API that recieves as input an _area_ and _distance_ and returns the amount of daily water required to irrigate the land (*dailyWater*) area and the number of srpinklers requiored for the given distance (*numSprinklers*)
+We demonstrate the use of Microservices with a simple REST API that recieves as input an _area_ and _distance_ and returns the amount of daily water required to irrigate the land area (*dailyWater*)  and the number of sprinklers required for irrigation lines with the given distance (*numSprinklers*).  _Note: Calculations are simulated for demo purposes only._
 
 [https://wt-867ca35bffcc22ad4896795f6d081535-0.sandbox.auth0-extend.com/irrigationMetrics?area=500&distance=2400](https://wt-867ca35bffcc22ad4896795f6d081535-0.sandbox.auth0-extend.com/irrigationMetrics?area=500&distance=2400)
 
