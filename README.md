@@ -1,10 +1,10 @@
 # Terrain
 Basic POC of a Web application with the folowing features
 
-* Authentication (using Auth0)
-* Maps & editable objects (polygons, rectangles & polylines) using Leaflet
+* Authentication (using [Auth0](https://auth0.com/))
+* Maps & editable objects (polygons, rectangles & polylines) using [Leaflet](https://leafletjs.com/)
 * Basic builtin calculation (polygons & rectangles area, polylines length)
-* Basic data from external Microservices using Webtask (simulates calculation of water & sprinkles for the given area & distance input)
+* Basic data from external Microservices using [Webtask](https://webtask.io/) (simulates calculation of water & sprinkles for the given area & distance input)
 This sample demonstrates how to add authentication to an Angular application using Auth0's Lock widget from the hosted login page. The sample uses the Angular CLI.
 * Responsive
 
