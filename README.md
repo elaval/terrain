@@ -17,6 +17,10 @@ This sample demonstrates how to add authentication to an Angular application usi
 This site is hosted in an Amazon S3 Bucket and is directly built & updated using [travis-ci](http://travis-ci.org) when  changes are pushed to the repository.
 
 ## External microservice
+We demonstrate the use of Microservices with a simple REST API that recieves as input an _area_ and _distance_ and returns
+
+[https://wt-867ca35bffcc22ad4896795f6d081535-0.sandbox.auth0-extend.com/irrigationMetrics?area=500&distance=2400](https://wt-867ca35bffcc22ad4896795f6d081535-0.sandbox.auth0-extend.com/irrigationMetrics?area=500&distance=2400)
+
 ![Information Panel](https://raw.githubusercontent.com/elaval/terrain/master/src/assets/readme_assets/infopanel.png)
 
 ## Running the application locally
