@@ -25,7 +25,7 @@ npm install -g @angular/cli
 
 Clone the repository to a local directory & install dependencies
 ```bash
-git clone xxx terrain
+git clone https://github.com/elaval/terrain.git terrain
 cd terrain
 npm install
 ```
