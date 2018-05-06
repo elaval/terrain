@@ -3,7 +3,7 @@ Basic POC of a Web application with the folowing features
 
 * Authentication (using [Auth0](https://auth0.com/))
 * Maps & editable objects (polygons, rectangles & polylines) using [Leaflet](https://leafletjs.com/)
-* Basic builtin calculation (polygons & rectangles area, polylines length)
+* Basic internal calculations of _area_ (polygons & rectangles) and _length/distance_ (polylines)
 * Basic data from external Microservices using [Webtask](https://webtask.io/) 
 * Responsive
 
