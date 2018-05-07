@@ -1,0 +1,31 @@
+
+<!-- this creates a google map on the page with the given lat/lng from -->
+<!-- the component as the initial center of the map: -->
+
+<div class="infopanel">
+
+  <div class="row legend">
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+          <svg height=20 width=20>
+            <path  class="irrigation line" stroke="#AAAAAA" stroke-opacity="1" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M4 10L15 10"></path>
+          </svg>
+          <div class="info-item">Irrigation Line</div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+          <svg height=20 width=20>
+              <path _ngcontent-c3="" class="plot" d="M2 2L12 2L18 10L18 18L2 18z" fill="#3388ff" fill-opacity="0.2" fill-rule="evenodd" stroke="#3388ff" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1" stroke-width="1"></path>       
+          </svg>
+          <div class="info-item">Plot area</div>
+        </div>
+      </div>
+    
+      <div class="info-item">Plot area: {{numberFormat(metrics.area)}} sqr mts</div>
+      <div class="info-item">Irrigation lines: {{numberFormat(metrics.distance)}} mts</div>
+      <div class="info-item">Weekly water: {{numberFormat(metrics.area*10)}} lts</div>
+      <div class="info-item">Required Sprinklers: {{numberFormat(metrics.distance/3)}}</div>
+</div>
+<button id="delete" (click)="deleteSelectedShape()"><i class="fa fa-trash fa-2" aria-hidden="true"> </i></button>
+<agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" (mapReady)="mapReady($event)"
+[mapTypeControl]="true"     [mapTypeControlOptions]="mapTypeControlOptions"
+>
+</agm-map>

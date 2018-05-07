@@ -16,7 +16,9 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { LeafletDrawModule } from '@asymmetrik/ngx-leaflet-draw';
 import { ShapesService } from './services/shapes.service';
 import { InfopanelComponent } from './views/infopanel/infopanel.component';
-
+import { AgmCoreModule } from '@agm/core';
+import { MapGoogleComponent } from './views/map-google/map-google.component';
+import { ShapeCollectionService } from './services/shape-collection.service';
 
 
 @NgModule({
@@ -24,7 +26,8 @@ import { InfopanelComponent } from './views/infopanel/infopanel.component';
     AppComponent,
     HomeComponent,
     MapComponent,
-    InfopanelComponent
+    InfopanelComponent,
+    MapGoogleComponent
   ],
   imports: [
     BrowserModule,
@@ -32,12 +35,16 @@ import { InfopanelComponent } from './views/infopanel/infopanel.component';
     HttpModule,
     RouterModule.forRoot(ROUTES),
     LeafletModule.forRoot(),
-    LeafletDrawModule.forRoot()
-
+    LeafletDrawModule.forRoot(),
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyCLF_UJ9DEZ_GrdQyUEb3wCaDRxDQW_2i4',
+      libraries: ['drawing', 'places']
+    })
   ],
   providers: [
     AuthService,
-    ShapesService
+    ShapesService,
+    ShapeCollectionService
   ],
   bootstrap: [AppComponent]
 })

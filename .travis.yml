@@ -6,6 +6,7 @@ node_js:
 branches:
   only:
     - master
+    - Google-maps
 
 before_script:
   - npm install -g @angular/cli@1.6.4
@@ -23,6 +24,19 @@ deploy:
   skip_cleanup: true
   upload-dir: terrain
   local_dir: dist
+  on:
+    branch: master
+
+  provider: s3
+  access_key_id: $AWS_ACCESS_KEY_ID
+  secret_access_key: $AWS_SECRET_ACCESS_KEY
+  bucket: demo.firstmakers.com
+  skip_cleanup: true
+  upload-dir: terrain
+  local_dir: dist
+  on:
+    branch: Google-maps
+
 
 after_deploy:
 

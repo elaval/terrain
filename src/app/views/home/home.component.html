@@ -1,5 +1,7 @@
 <div *ngIf="auth.isAuthenticated()">
-  <app-map></app-map>
+  <app-map-google></app-map-google>
+  <!--<app-map></app-map>-->
+  
 </div>
 <div *ngIf="!auth.isAuthenticated()" class="text-center">
   
@@ -7,5 +9,5 @@
   <h4>  You are not logged in!<br> Please <a href="#" (click)="auth.login()">Log In</a> to continue.
   </h4>
   <img src="https://media.giphy.com/media/8vI1CDKpgw5lDhEzcF/giphy.gif" class="img-responsive terrain" alt="Image">
-  
+
 </div>

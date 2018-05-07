@@ -1,0 +1,42 @@
+agm-map {
+    height: calc(100vh - 56px);
+}
+
+:host {
+    position: relative; 
+}
+
+.infopanel_ { 
+    position: absolute; 
+    top: 10px; 
+    left: 10px; 
+    width: 200px;
+    z-index: 99; 
+}
+
+button#delete {
+    position: absolute; 
+    margin:5px;
+    z-index: 99;   
+    font-size: 14px;
+    height: 25px;
+}
+
+.infopanel {
+    margin:5px;
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+.infopanel .info-item {
+    margin: 0 0 5px;
+    color: #777;
+}
+
+.infopanel .row.legend {
+    font-size: 10px;
+    padding-bottom: 5px
+}
