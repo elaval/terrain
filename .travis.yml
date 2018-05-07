@@ -13,9 +13,8 @@ before_script:
   - npm i
 
 script:
-  - test $TRAVIS_BRANCH = "master" && ng build --env=prod --base-href /terrain/
-  - test $TRAVIS_BRANCH = "Google-maps" && ng build --env=prod --base-href /terrainG/
- 
+  - if [ "$TRAVIS_BRANCH" = "master" ]; then ng build --env=prod --base-href /terrain/; fi
+  - if [ "$TRAVIS_BRANCH" = "Google-maps" ]; then ng build --env=prod --base-href /terrainG/; fi 
 
 deploy:
   provider: s3
