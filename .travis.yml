@@ -32,7 +32,7 @@ deploy:
   secret_access_key: $AWS_SECRET_ACCESS_KEY
   bucket: demo.firstmakers.com
   skip_cleanup: true
-  upload-dir: terrain
+  upload-dir: terrainG
   local_dir: dist
   on:
     branch: Google-maps
