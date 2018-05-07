@@ -13,10 +13,8 @@ before_script:
   - npm i
 
 script:
-  - ng build --env=prod --base-href /terrain/
-    if: branch = master
-  - ng build --env=prod --base-href /terrainG/
-    if: branch = Google-maps
+  - test $TRAVIS_BRANCH = "master" && ng build --env=prod --base-href /terrain/
+  - test $TRAVIS_BRANCH = "Google-maps" && ng build --env=prod --base-href /terrainG/
  
 
 deploy:
