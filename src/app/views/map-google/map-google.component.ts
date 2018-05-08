@@ -31,16 +31,21 @@ export class MapGoogleComponent implements OnInit {
     this.shapeCollectionService.metrics.subscribe(metrics => {
       this.zone.run(() => this.metrics = metrics);
     })
-
-
-    
   }
 
   mapReady(map) {
+    this.shapeCollectionService.retrieveCollection().forEach(newShape => {
+      this.setShapeEventListeners(newShape);
+      newShape.setMap(map);
+      this.shapeCollectionService.updateMetrics();
+    });
+
     this.mapTypeControlOptions = {
       //style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
       //position: google.maps.ControlPosition.LEFT_CENTER
     }
+
+    //this.shapeCollectionService.updateMetrics();
 
     const infoPanelEl = d3.select("div.infopanel").node();
     map.controls[google.maps.ControlPosition.RIGHT_TOP].push(infoPanelEl);
@@ -79,11 +84,8 @@ export class MapGoogleComponent implements OnInit {
         draggable: true
       }
     });
-    drawingManager.setMap(map);
 
-    google.maps.event.addListener(drawingManager, 'rectanglecomplete', (rectangle) => {
-      var bounds = rectangle.getBounds();
-    });
+    drawingManager.setMap(map);
 
     google.maps.event.addListener(drawingManager, 'overlaycomplete', (event) => {
       const newShape = event.overlay;
@@ -95,25 +97,8 @@ export class MapGoogleComponent implements OnInit {
       drawingManager.setDrawingMode(null);
       // Add an event listener that selects the newly-drawn shape when the user
       // mouses down on it.
-      google.maps.event.addListener(newShape, 'click', (e) => {
-          if (e.vertex !== undefined) {
-              if (newShape.type === google.maps.drawing.OverlayType.POLYGON) {
-                  var path = newShape.getPaths().getAt(e.path);
-                  path.removeAt(e.vertex);
-                  if (path.length < 3) {
-                      newShape.setMap(null);
-                  }
-              }
-              if (newShape.type === google.maps.drawing.OverlayType.POLYLINE) {
-                  var path = newShape.getPath();
-                  path.removeAt(e.vertex);
-                  if (path.length < 2) {
-                      newShape.setMap(null);
-                  }
-              }
-          }
-          this.setSelection(newShape);
-      });
+
+      this.setShapeEventListeners(newShape);
       this.setSelection(newShape);
               
       const dm = drawingManager;
@@ -121,6 +106,28 @@ export class MapGoogleComponent implements OnInit {
       if (event.type == 'circle') {
         var radius = event.overlay.getRadius();
       }
+    });
+  }
+
+  setShapeEventListeners(shape) {
+    google.maps.event.addListener(shape, 'click', (e) => {
+      if (e.vertex !== undefined) {
+          if (shape.type === google.maps.drawing.OverlayType.POLYGON) {
+              var path = shape.getPaths().getAt(e.path);
+              path.removeAt(e.vertex);
+              if (path.length < 3) {
+                shape.setMap(null);
+              }
+          }
+          if (shape.type === google.maps.drawing.OverlayType.POLYLINE) {
+              var path = shape.getPath();
+              path.removeAt(e.vertex);
+              if (path.length < 2) {
+                shape.setMap(null);
+              }
+          }
+      }
+      this.setSelection(shape);
     });
   }
 

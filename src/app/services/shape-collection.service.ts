@@ -20,18 +20,21 @@ export class ShapeCollectionService {
   metrics = this.metricsSubject.asObservable();
 
 
-  constructor() { }
+  constructor() { 
+  }
 
   add(shape) {
     const id = uuid();
     shape._id = id;
     this.collection[id] = shape;
+    this.storeCollection();
     this.addMetrics(shape);
   }
 
   remove(shape) {
     const id = shape._id;
     this.collection = _.omit(this.collection, [id]);
+    this.storeCollection();
     this.substractMetrics(shape);
 
   }
@@ -114,4 +117,120 @@ export class ShapeCollectionService {
   };
   
 
+  storeCollection() {
+    const plainObjectCollection = _.map(this.collection, (shape, id) => {
+      return this.toObject(shape);
+    })
+    localStorage.setItem("gmapCollection", JSON.stringify(plainObjectCollection));
+  }
+
+  retrieveCollection() {
+    const plainObjectCollection = JSON.parse(localStorage.getItem("gmapCollection") || "{}");
+    
+    _.each(plainObjectCollection, (object) => {
+      if (object && object._id) {
+        this.collection[object._id] = this.toShape(object);
+      }
+    })
+
+    return _.map(this.collection, d => d);
+  }
+
+  collection2Overlays() {
+    const overlays = _.map(this.collection, (shape, id) => {
+      if (shape.type = "polygon") {
+        return new google.maps.Polygon({
+        
+        });
+      }
+    })
+
+  }
+
+  toObject(shape) {
+    if (shape.type == "rectangle") {
+      const bounds = shape.getBounds();
+
+      const ne = bounds.getNorthEast();
+      const sw = bounds.getSouthWest();
+      const n = ne.lat();
+      const e = ne.lng();
+      const s = sw.lat();
+      const w = sw.lng();
+
+      return {
+        type: shape.type,
+        _id: shape._id,
+        bounds : {
+          north: n,
+          east: e,
+          south: s,
+          west: w
+        }
+      }
+    } else if (shape.type == "polygon") {
+      const latLngs = shape.getPath().getArray().map(d => {
+        return {lat: d.lat(), lng:d.lng()};
+      });
+      return {
+        type: shape.type,
+        _id: shape._id,
+        latLngs : latLngs
+      } 
+    } else if (shape.type == "polyline") {
+      const latLngs = shape.getPath().getArray().map(d => {
+        return {lat: d.lat(), lng:d.lng()};
+      });
+      return {
+        type: shape.type,
+        _id: shape._id,
+        latLngs : latLngs
+      } 
+    }
+  }
+
+  toShape(object) {
+    if (object.type == "rectangle") {
+      const shape =  new google.maps.Rectangle({
+        bounds : object.bounds,
+        fillColor: 'green',
+        fillOpacity: 0.5,
+        strokeWeight: 5,
+        clickable: true,
+        editable: false,
+        draggable: true
+      });
+
+      shape._id = object._id;
+      shape.type = object.type;
+      return shape;
+    } if (object.type == "polygon") {
+      const shape =  new google.maps.Polygon({
+        path : object.latLngs,
+        fillColor: 'green',
+        fillOpacity: 0.5,
+        strokeWeight: 5,
+        clickable: true,
+        editable: false,
+        draggable: true
+      });
+
+      shape._id = object._id;
+      shape.type = object.type;
+      return shape;
+    } if (object.type == "polyline") {
+      const shape =  new google.maps.Polyline({
+        path : object.latLngs,
+        strokeColor:'#AAAAAA',
+        strokeWeight: 8,
+        clickable: true,
+        editable: false,
+        draggable: true
+      });
+
+      shape._id = object._id;
+      shape.type = object.type;
+      return shape;
+    }
+  }
 }

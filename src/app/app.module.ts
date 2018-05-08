@@ -38,7 +38,7 @@ import { ShapeCollectionService } from './services/shape-collection.service';
     LeafletDrawModule.forRoot(),
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyCLF_UJ9DEZ_GrdQyUEb3wCaDRxDQW_2i4',
-      libraries: ['drawing', 'places']
+      libraries: ['drawing', 'places', 'geometry']
     })
   ],
   providers: [
