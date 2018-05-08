@@ -129,6 +129,27 @@ export class MapGoogleComponent implements OnInit {
       }
       this.setSelection(shape);
     });
+
+    google.maps.event.addListener(shape, 'bounds_changed', (e) => {
+      this.shapeCollectionService.editShape(shape);
+    })    
+    
+
+    if (shape.getPath) {
+      google.maps.event.addListener(shape.getPath(), 'insert_at', (e) => {
+        this.shapeCollectionService.editShape(shape);
+      })    
+      
+      google.maps.event.addListener(shape.getPath(), 'remove_at', (e) => {
+        this.shapeCollectionService.editShape(shape);
+      })
+  
+      google.maps.event.addListener(shape.getPath(), 'set_at', (e) => {
+        this.shapeCollectionService.editShape(shape);
+      })
+    }
+
+    
   }
 
   setSelection (shape) {

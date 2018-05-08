@@ -39,6 +39,11 @@ export class ShapeCollectionService {
 
   }
 
+  editShape(shape) {
+    this.storeCollection();
+    this.updateMetrics();
+  }
+
   addMetrics(shape) {
     if(shape.type=='rectangle' || shape.type=='polygon') {
       this.metricsData.area += this.getArea(shape);
@@ -64,7 +69,6 @@ export class ShapeCollectionService {
     if (shape.type=='polyline') {
       distance = google.maps.geometry.spherical.computeLength(shape.getPath());
     }
-
     return distance;
   }
 
