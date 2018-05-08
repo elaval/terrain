@@ -20,6 +20,11 @@ button#delete {
     z-index: 99;   
     font-size: 14px;
     height: 25px;
+    color:#777;
+}
+
+button#delete.active {
+    color: black;
 }
 
 .infopanel {

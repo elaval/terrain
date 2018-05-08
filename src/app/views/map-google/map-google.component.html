@@ -24,7 +24,7 @@
       <div class="info-item">Weekly water: {{numberFormat(metrics.smartMetrics && metrics.smartMetrics.dailyWater * 7 || 0)}} lts</div>
       <div class="info-item">Required Sprinklers: {{numberFormat(metrics.smartMetrics && metrics.smartMetrics.numSprinklers || 0)}}</div>
 </div>
-<button id="delete" (click)="deleteSelectedShape()"><i class="fa fa-trash fa-2" aria-hidden="true"> </i></button>
+<button id="delete" (click)="deleteSelectedShape()" [class.active]="removeSelected"><i class="fa fa-trash fa-2" aria-hidden="true"> </i></button>
 <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" (mapReady)="mapReady($event)"
 [mapTypeControl]="true"     [mapTypeControlOptions]="mapTypeControlOptions"
 >

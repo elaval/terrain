@@ -129,15 +129,32 @@ export class ShapeCollectionService {
   }
 
   retrieveCollection() {
-    const plainObjectCollection = JSON.parse(localStorage.getItem("gmapCollection") || "{}");
-    
-    _.each(plainObjectCollection, (object) => {
-      if (object && object._id) {
-        this.collection[object._id] = this.toShape(object);
-      }
-    })
+    return new Promise((resolve,reject) => {
 
-    return _.map(this.collection, d => d);
+      const plainObjectCollection = JSON.parse(localStorage.getItem("gmapCollection") || null);
+      
+      if (plainObjectCollection && plainObjectCollection.length) {
+        _.each(plainObjectCollection, (object) => {
+          if (object && object._id) {
+            this.collection[object._id] = this.toShape(object);
+          }
+        })
+        resolve(_.map(this.collection, d => d));
+
+      } else {
+        const dataPromise:any = d3.json('assets/demoG.json');
+        dataPromise.then((plainObjectCollection => {
+          _.each(plainObjectCollection, (object) => {
+            if (object && object._id) {
+              this.collection[object._id] = this.toShape(object);
+            }
+          })
+
+          resolve(_.map(this.collection, d => d));
+        }));
+      }
+
+    })
   }
 
   collection2Overlays() {

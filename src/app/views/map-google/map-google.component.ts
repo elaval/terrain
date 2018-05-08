@@ -19,6 +19,7 @@ export class MapGoogleComponent implements OnInit {
   lng: number = -97.14901305211244;
   zoom: number = 18;
   mapTypeControlOptions = {};
+  removeSelected = false;
 
   selectedShape;
   
@@ -34,11 +35,18 @@ export class MapGoogleComponent implements OnInit {
   }
 
   mapReady(map) {
-    this.shapeCollectionService.retrieveCollection().forEach(newShape => {
-      this.setShapeEventListeners(newShape);
-      newShape.setMap(map);
-      this.shapeCollectionService.updateMetrics();
-    });
+    this.shapeCollectionService.retrieveCollection()
+    .then((shapes:any[]) => {
+      shapes.forEach(newShape => {
+        this.setShapeEventListeners(newShape);
+        newShape.setMap(map);
+        if (newShape.type == 'polyline') {
+          newShape.set('zIndex',99);
+        }
+        this.shapeCollectionService.updateMetrics();
+      });
+    })
+    
 
     this.mapTypeControlOptions = {
       //style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
@@ -53,8 +61,9 @@ export class MapGoogleComponent implements OnInit {
     const deleteBtnEl = d3.select("button#delete").node()
     map.controls[google.maps.ControlPosition.TOP_CENTER].push(deleteBtnEl);
 
-    var drawingManager = new google.maps.drawing.DrawingManager({
-      drawingMode: google.maps.drawing.OverlayType.MARKER,
+    this.drawingManager = new google.maps.drawing.DrawingManager({
+      drawingMode: null,
+      //drawingMode: google.maps.drawing.OverlayType.RECTANGLE,
       drawingControl: true,
       drawingControlOptions: {
         position: google.maps.ControlPosition.TOP_CENTER,
@@ -85,27 +94,23 @@ export class MapGoogleComponent implements OnInit {
       }
     });
 
-    drawingManager.setMap(map);
 
-    google.maps.event.addListener(drawingManager, 'overlaycomplete', (event) => {
+    this.drawingManager.setMap(map);
+
+    google.maps.event.addListener(this.drawingManager, 'overlaycomplete', (event) => {
       const newShape = event.overlay;
       newShape.type = event.type;
 
       this.shapeCollectionService.add(newShape)
 
       // Switch back to non-drawing mode after drawing a shape.
-      drawingManager.setDrawingMode(null);
+      this.drawingManager.setDrawingMode(null);
       // Add an event listener that selects the newly-drawn shape when the user
       // mouses down on it.
 
       this.setShapeEventListeners(newShape);
       this.setSelection(newShape);
               
-      const dm = drawingManager;
-      const m = map;
-      if (event.type == 'circle') {
-        var radius = event.overlay.getRadius();
-      }
     });
   }
 
@@ -126,6 +131,11 @@ export class MapGoogleComponent implements OnInit {
                 shape.setMap(null);
               }
           }
+      }
+      if (this.removeSelected) {
+        this.shapeCollectionService.remove(shape);
+        shape.setMap(null);
+        this.selectedShape = null;
       }
       this.setSelection(shape);
     });
@@ -174,11 +184,16 @@ export class MapGoogleComponent implements OnInit {
   }
 
   deleteSelectedShape () {
+    this.removeSelected = ! this.removeSelected;
+    this.drawingManager.setDrawingMode(google.maps.drawing.OverlayType.RECTANGLE);
+    this.drawingManager.setDrawingMode(null);
+    /*
     if (this.selectedShape) {
       this.shapeCollectionService.remove(this.selectedShape);
 
       this.selectedShape.setMap(null);
     }
+    */
   }
 
   numberFormat(number) {
