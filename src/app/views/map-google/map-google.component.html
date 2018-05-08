@@ -21,8 +21,8 @@
     
       <div class="info-item">Plot area: {{numberFormat(metrics.area)}} sqr mts</div>
       <div class="info-item">Irrigation lines: {{numberFormat(metrics.distance)}} mts</div>
-      <div class="info-item">Weekly water: {{numberFormat(metrics.area*10)}} lts</div>
-      <div class="info-item">Required Sprinklers: {{numberFormat(metrics.distance/3)}}</div>
+      <div class="info-item">Weekly water: {{numberFormat(metrics.smartMetrics && metrics.smartMetrics.dailyWater * 7 || 0)}} lts</div>
+      <div class="info-item">Required Sprinklers: {{numberFormat(metrics.smartMetrics && metrics.smartMetrics.numSprinklers || 0)}}</div>
 </div>
 <button id="delete" (click)="deleteSelectedShape()"><i class="fa fa-trash fa-2" aria-hidden="true"> </i></button>
 <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" (mapReady)="mapReady($event)"

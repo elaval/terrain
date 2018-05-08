@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as L from 'leaflet';
 import * as d3 from 'd3';
-import { POLYLINE_SHAPE_OPTIONS } from '../config';
+import { POLYLINE_SHAPE_OPTIONS, SMART_METRICS_URL } from '../config';
 
 const smartMetricsMicroServiceUrl= "https://wt-867ca35bffcc22ad4896795f6d081535-0.sandbox.auth0-extend.com/irrigationMetrics";
 
@@ -98,7 +98,7 @@ export class ShapesService {
   
       })
 
-      const request:any = d3.json(`${smartMetricsMicroServiceUrl}?area=${area}&distance=${distance}`);
+      const request:any = d3.json(`${SMART_METRICS_URL}?area=${area}&distance=${distance}`);
       request
       .then(data => {
         resolve({'area' : area, 'distance': distance, 'smartMetrics':data});

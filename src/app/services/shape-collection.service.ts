@@ -1,17 +1,20 @@
 import { Injectable } from '@angular/core';
 import { v4 as uuid } from 'uuid';
 import * as _ from 'lodash';
+import * as d3 from "d3";
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { SMART_METRICS_URL } from '../config';
 declare var google:any;
 
 
 @Injectable()
 export class ShapeCollectionService {
-  collection = {}
+  collection = {};
+
   metricsData = {
-    area:0,
-    distance:0
-  }
+    "area":0,
+    "distance":0
+  };
 
   metricsSubject = new BehaviorSubject(this.metricsData);
   metrics = this.metricsSubject.asObservable();
@@ -28,8 +31,9 @@ export class ShapeCollectionService {
 
   remove(shape) {
     const id = shape._id;
-    this.substractMetrics(shape);
     this.collection = _.omit(this.collection, [id]);
+    this.substractMetrics(shape);
+
   }
 
   addMetrics(shape) {
@@ -39,7 +43,7 @@ export class ShapeCollectionService {
       this.metricsData.distance += this.getDistance(shape);
     }
 
-    this.metricsSubject.next(this.metricsData);
+    this.updateMetrics();
   }
 
   substractMetrics(shape) {
@@ -48,12 +52,15 @@ export class ShapeCollectionService {
     } else if (shape.type=='polyline') {
       this.metricsData.distance -= this.getDistance(shape);
     }
-    this.metricsSubject.next(this.metricsData);
-
+    this.updateMetrics();
   }
 
-  getDistance(polyline) {
-    const distance = google.maps.geometry.spherical.computeLength(polyline.getPath());
+  getDistance(shape) {
+    let distance = 0;
+
+    if (shape.type=='polyline') {
+      distance = google.maps.geometry.spherical.computeLength(shape.getPath());
+    }
 
     return distance;
   }
@@ -67,6 +74,28 @@ export class ShapeCollectionService {
     }
     
     return area;
+  }
+
+  updateMetrics() {
+    let area = 0;
+    let distance = 0;
+
+    _.each(this.collection, (shape, id) => {
+      area += this.getArea(shape);
+      distance += this.getDistance(shape);
+    })
+
+    let metrics = {
+      "area": area,
+      "distance": distance
+    }
+
+    const request:any = d3.json(`${SMART_METRICS_URL}?area=${area}&distance=${distance}`);
+    request
+    .then(data => {
+      this.metricsSubject.next(<any>{'area' : area, 'distance': distance, 'smartMetrics':data});
+    })
+
   }
 
 
